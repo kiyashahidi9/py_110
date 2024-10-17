@@ -1,3 +1,7 @@
+'''
+Tic-Tac-Toe game with a computer with defensive/offensive abilities
+'''
+
 import random
 import os
 import time
@@ -40,8 +44,8 @@ def answer_yes_no(message):
             return True
         if answer.casefold() in ['n', 'no']:
             return False
-        else:
-            answer = prompt(f'{message}\nPlease enter a y)es or a n)o')
+
+        answer = prompt(f'{message}\nPlease enter a y)es or a n)o')
 
 # displays the tic-tac-toe board
 def display_board(board):
@@ -84,7 +88,7 @@ def choose_square(board, current_player):
 def alternate_player(current_player):
     if current_player == 'player':
         return 'computer'
-    else:
+    elif current_player == 'computer':
         return 'player'
 
 # prompts the player to choose a square, validates input
@@ -121,13 +125,13 @@ def find_risk_square(board):
                         [3, 6, 9], [6, 9, 3], [3, 9, 6],
                         [1, 5, 9], [5, 9, 1], [1, 9, 5],
                         [3, 5, 7], [5, 7, 3], [3, 7, 5],]
-    
+
     for threat in threat_positions:
-        if (board[threat[0]] == COMPUTER_MARKER 
+        if (board[threat[0]] == COMPUTER_MARKER
                 and board[threat[1]] == COMPUTER_MARKER
                 and board[threat[2]] != HUMAN_MARKER):
             return threat[2]
-        elif (board[threat[0]] == HUMAN_MARKER 
+        elif (board[threat[0]] == HUMAN_MARKER
                 and board[threat[1]] == HUMAN_MARKER
                 and board[threat[2]] != COMPUTER_MARKER):
             return threat[2]
@@ -135,7 +139,7 @@ def find_risk_square(board):
     return False
 
 # prompts the computer to choose a square.
-# if an offensive/defensive/square 5 is not available, 
+# if an offensive/defensive/square 5 is not available,
 # a random sqare is chosen.
 def computer_chooses_square(board):
     if len(empty_squares(board)) == 0:
@@ -181,6 +185,7 @@ def detect_total_winner():
         return 'Player'
     if computer_wins == WIN_AMOUNT:
         return 'Computer'
+    return False
 
 # increments appropriate scores as rounds are won
 def track_score(winner):
@@ -220,12 +225,14 @@ def play_tic_tac_toe():
     while True:
 
         reset_score()
-        current_player = who_goes_first()
+        first_player = who_goes_first()
+    
 
         # allows you to choose to play another round
         while True:
-            
+
             board = initialize_board()
+            current_player = first_player
 
             # choosing squares until someone wins the round
             while True:
@@ -244,7 +251,7 @@ def play_tic_tac_toe():
                 track_score(winner)
             else:
                 pretty_display('It\'s a tie!')
-            
+
             display_total_wins()
 
             # if someone won 5 rounds
@@ -252,10 +259,10 @@ def play_tic_tac_toe():
                 break
 
             play_again = answer_yes_no('Play another round?')
-            if not(play_again):
+            if not play_again:
                 break
-        
-        # 
+
+
         if detect_total_winner():
             os.system('clear')
             pretty_display(f'{winner} won the game!')
@@ -263,7 +270,7 @@ def play_tic_tac_toe():
             play_again = answer_yes_no('Play another match?')
         else:
             break
-        if not(play_again):
+        if not play_again:
             break
 
     os.system('clear')
@@ -272,4 +279,3 @@ def play_tic_tac_toe():
     os.system('clear')
 
 play_tic_tac_toe()
-
