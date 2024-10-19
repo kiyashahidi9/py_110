@@ -189,6 +189,7 @@ def calc_ace_value(ace_cards, cards):
 
     for ace_card in ace_cards:
         cards[ace_card] = 11
+    for ace_card in ace_cards:
         if calc_total_card_value(cards) > LIMIT:
             cards[ace_card] = 1
 
@@ -201,8 +202,10 @@ def card_display(cards):
 def display_cards(player_hand, dealer_hand):
     ''' Displays the current cards in each player hand '''
 
+    plural = 's' if len(dealer_hand) > 2 else ''
+
     print(f'Dealer has: {card_display(dealer_hand).split()[0]}'
-          f' {'and unknown card ' * (len(dealer_hand) - 1)}')
+          f' and unknown card{plural}')
 
     print(f'You have: {card_display(player_hand)}')
 
@@ -268,12 +271,14 @@ def who_won(player_hand, dealer_hand):
 def win_display(winner, player_hand, dealer_hand):
     ''' Displays the winner and final hands '''
 
-    display_final_cards(player_hand, dealer_hand)
     if winner == 'tie':
         result = ''
     else:
         result = ' won'
     display_header_box(f'{winner.capitalize()}{result} this round!')
+    short_pause()
+    
+    display_final_cards(player_hand, dealer_hand)
     display_scoreboard()
 
 def busted_display(player_busted):
@@ -323,6 +328,7 @@ def play_again():
         play_twenty_one()
 
 def increment_player_scores(winner):
+    ''' Increments the score of the winner '''
 
     global player_wins, dealer_wins
     if winner == 'player':
@@ -331,6 +337,7 @@ def increment_player_scores(winner):
         dealer_wins += 1
 
 def prompt_next_round():
+    ''' Prompts the user to continue to the next round '''
 
     input("\nHit enter to continue to the next round: ")
 
@@ -341,10 +348,12 @@ def display_scoreboard():
     print(f'Dealer Wins: {dealer_wins}')
 
 def game_win_display(winner, player_hand, dealer_hand):
+    ''' Displays the winner after best out of 5 is won '''
 
     clear_screen()
-    display_final_cards(player_hand, dealer_hand)
     display_header_box(f'{winner} won the game!!')
+    short_pause()
+    display_final_cards(player_hand, dealer_hand)
     display_scoreboard()
     short_pause()
 
@@ -371,16 +380,13 @@ def play_twenty_one():
             while True:
                 display_cards(player_hand, dealer_hand)
 
-                if prompt_player_hit_stay() in ['h', 'hit']:
-                    deal_another_card(deck, player_hand)
-                else:
+                if busted(player_hand) or prompt_player_hit_stay() in ['s', 'stay']:
                     break
+
+                deal_another_card(deck, player_hand)
 
                 current_draw_display(player_hand)
                 short_pause()
-
-                if busted(player_hand):
-                    break
 
                 clear_screen()
 
@@ -398,16 +404,14 @@ def play_twenty_one():
             while True:
                 display_cards(player_hand, dealer_hand)
                 short_pause()
-                if return_total_card_value(dealer_hand) < (LIMIT - 4):
-                    deal_another_card(deck, dealer_hand)
-                else:
+
+                if return_total_card_value(dealer_hand) > (LIMIT - 4) or busted(dealer_hand):
                     break
+
+                deal_another_card(deck, dealer_hand)
 
                 current_draw_display(dealer_hand, False)
                 short_pause()
-
-                if busted(dealer_hand):
-                    break
 
                 clear_screen()
 
